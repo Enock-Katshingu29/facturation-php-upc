@@ -1,0 +1,34 @@
+[
+    {
+        "identifiant": "Enock.katshingu",
+        "mot_de_passe": "$2y$10$7KzMxK9dTCY2ZzNUM0tinOi.A4PS88Z9E\/WF9BYXtZyqcvTvtLRfq",
+        "role": "super_admin",
+        "nom_complet": "Enock katshingu",
+        "date_creation": "2026-04-17",
+        "actif": true
+    },
+    {
+        "identifiant": "dan.mbo",
+        "mot_de_passe": "$2y$10$7KzMxK9dTCY2ZzNUM0tinOi.A4PS88Z9E\/WF9BYXtZyqcvTvtLRfq",
+        "role": "caissier",
+        "nom_complet": "Daniel Mbo",
+        "date_creation": "2026-04-18",
+        "actif": true
+    },
+    {
+        "identifiant": "AUDREY",
+        "mot_de_passe": "$2y$10$QeK.3iQfUZlJ8fZMN5jVX.Ito5W7f8i5j.\/ohVeCSsOyALzBGp64W",
+        "role": "manager",
+        "nom_complet": "AUDREY MUSENGI",
+        "date_creation": "2026-04-28",
+        "actif": true
+    },
+    {
+        "identifiant": "carlos",
+        "mot_de_passe": "$2y$10$BcFJ5svqKri8HMN8GS7fQe5sWUrH1oDdq8zQNohaFL2br54TVgxUK",
+        "role": "caissier",
+        "nom_complet": "roberto carlos",
+        "date_creation": "2026-04-29",
+        "actif": true
+    }
+]

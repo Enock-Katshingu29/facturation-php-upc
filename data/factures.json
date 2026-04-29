@@ -1,0 +1,239 @@
+[
+    {
+        "id_facture": "FAC-20260417-001",
+        "date": "2026-04-17",
+        "heure": "10:35:22",
+        "caissier": "dan.mbo",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 2,
+                "sous_total_ht": 2400
+            },
+            {
+                "code_barre": "8901234567890",
+                "nom": "Savon de Marseille",
+                "prix_unitaire_ht": 450,
+                "quantite": 5,
+                "sous_total_ht": 2250
+            }
+        ],
+        "total_ht": 4650,
+        "tva": 837,
+        "total_ttc": 5487
+    },
+    {
+        "id_facture": "FAC-20260423-124154",
+        "date": "2026-04-23",
+        "heure": "12:41:54",
+        "caissier": "dan.mbo",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 2,
+                "sous_total_ht": 2400
+            }
+        ],
+        "total_ht": 2400,
+        "tva": 432,
+        "total_ttc": 2832
+    },
+    {
+        "id_facture": "FAC-20260423-130733",
+        "date": "2026-04-23",
+        "heure": "13:07:33",
+        "caissier": "Enock.katshingu",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 2,
+                "sous_total_ht": 2400
+            }
+        ],
+        "total_ht": 2400,
+        "tva": 432,
+        "total_ttc": 2832
+    },
+    {
+        "id_facture": "FAC-20260423-144055",
+        "date": "2026-04-23",
+        "heure": "14:40:55",
+        "caissier": "dan.mbo",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 2,
+                "sous_total_ht": 2400
+            }
+        ],
+        "total_ht": 2400,
+        "tva": 432,
+        "total_ttc": 2832
+    },
+    {
+        "id_facture": "FAC-20260423-193823",
+        "date": "2026-04-23",
+        "heure": "19:38:23",
+        "caissier": "Enock.katshingu",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 2,
+                "sous_total_ht": 2400
+            }
+        ],
+        "total_ht": 2400,
+        "tva": 432,
+        "total_ttc": 2832
+    },
+    {
+        "id_facture": "FAC-20260423-193829",
+        "date": "2026-04-23",
+        "heure": "19:38:29",
+        "caissier": "Enock.katshingu",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 2,
+                "sous_total_ht": 2400
+            }
+        ],
+        "total_ht": 2400,
+        "tva": 432,
+        "total_ttc": 2832
+    },
+    {
+        "id_facture": "FAC-20260423-193835",
+        "date": "2026-04-23",
+        "heure": "19:38:35",
+        "caissier": "Enock.katshingu",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 2,
+                "sous_total_ht": 2400
+            }
+        ],
+        "total_ht": 2400,
+        "tva": 432,
+        "total_ttc": 2832
+    },
+    {
+        "id_facture": "FAC-20260427-154052",
+        "date": "2026-04-27",
+        "heure": "15:40:52",
+        "caissier": "kima.sudan",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 6,
+                "sous_total_ht": 7200
+            }
+        ],
+        "total_ht": 7200,
+        "tva": 1296,
+        "total_ttc": 8496
+    },
+    {
+        "id_facture": "FAC-20260428-130412",
+        "date": "2026-04-28",
+        "heure": "13:04:12",
+        "caissier": "dan.mbo",
+        "articles": [
+            {
+                "code_barre": "1234567890123",
+                "nom": "Lait en poudre 500g",
+                "prix_unitaire_ht": 2500,
+                "quantite": 8,
+                "sous_total_ht": 20000
+            },
+            {
+                "code_barre": "8901234567890",
+                "nom": "Savon de Marseille",
+                "prix_unitaire_ht": 450,
+                "quantite": 10,
+                "sous_total_ht": 4500
+            }
+        ],
+        "total_ht": 24500,
+        "tva": 4410,
+        "total_ttc": 28910
+    },
+    {
+        "id_facture": "FAC-20260428-133110",
+        "date": "2026-04-28",
+        "heure": "13:31:10",
+        "caissier": "kima.sudan",
+        "articles": [
+            {
+                "code_barre": "90338052",
+                "nom": "COCA BOUTEILLE",
+                "prix_unitaire_ht": 1000,
+                "quantite": 1,
+                "sous_total_ht": 1000
+            }
+        ],
+        "total_ht": 1000,
+        "tva": 180,
+        "total_ttc": 1180
+    },
+    {
+        "id_facture": "FAC-20260428-133249",
+        "date": "2026-04-28",
+        "heure": "13:32:49",
+        "caissier": "kima.sudan",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 15,
+                "sous_total_ht": 18000
+            }
+        ],
+        "total_ht": 18000,
+        "tva": 3240,
+        "total_ttc": 21240
+    },
+    {
+        "id_facture": "FAC-20260428-133455",
+        "date": "2026-04-28",
+        "heure": "13:34:55",
+        "caissier": "kima.sudan",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 2,
+                "sous_total_ht": 2400
+            },
+            {
+                "code_barre": "90338052",
+                "nom": "COCA BOUTEILLE",
+                "prix_unitaire_ht": 1000,
+                "quantite": 2,
+                "sous_total_ht": 2000
+            }
+        ],
+        "total_ht": 4400,
+        "tva": 792,
+        "total_ttc": 5192
+    }
+]
