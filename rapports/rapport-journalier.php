@@ -1,10 +1,6 @@
 <?php
 include("../auth/session.php");
-include("../config/config.php");
 include("../includes/fonctions-permissions.php");
-
-// Chemin de base pour les liens
-$base_url = base_url();
 
 // Vérifier la permission
 exiger_permission("rapport_journalier");
