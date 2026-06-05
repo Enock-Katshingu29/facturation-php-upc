@@ -113,7 +113,7 @@ function creerUtilisateur($identifiant, $motDePasse, $role, $nomComplet) {
     
     $utilisateurs[] = $nouvelUtilisateur;
     
-    if (file_put_contents(FICHIER_UTILISATEURS, json_encode($utilisateurs, JSON_PRETTY_PRINT)) === false) {
+    if (file_put_contents(FICHIER_UTILISATEURS, json_encode($utilisateurs, JSON_PRETTY_PRINT), LOCK_EX) === false) {
         return [false, "Erreur lors de la création de l'utilisateur"];
     }
     
@@ -155,7 +155,7 @@ function modifierUtilisateur($identifiant, $nouvellesDonnees) {
                 $utilisateur['mot_de_passe'] = password_hash($nouvellesDonnees['mot_de_passe'], PASSWORD_DEFAULT);
             }
             
-            if (file_put_contents(FICHIER_UTILISATEURS, json_encode($utilisateurs, JSON_PRETTY_PRINT)) === false) {
+            if (file_put_contents(FICHIER_UTILISATEURS, json_encode($utilisateurs, JSON_PRETTY_PRINT), LOCK_EX) === false) {
                 return [false, "Erreur lors de la modification de l'utilisateur"];
             }
             
@@ -182,7 +182,7 @@ function supprimerUtilisateur($identifiant) {
         return [false, "Utilisateur non trouvé"];
     }
     
-    if (file_put_contents(FICHIER_UTILISATEURS, json_encode(array_values($nouveauxUtilisateurs), JSON_PRETTY_PRINT)) === false) {
+    if (file_put_contents(FICHIER_UTILISATEURS, json_encode(array_values($nouveauxUtilisateurs), JSON_PRETTY_PRINT), LOCK_EX) === false) {
         return [false, "Erreur lors de la suppression de l'utilisateur"];
     }
     

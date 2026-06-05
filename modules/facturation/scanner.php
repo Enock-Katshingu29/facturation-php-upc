@@ -5,11 +5,11 @@
  */
 include("../../auth/session.php");
 include("../../includes/fonctions-permissions.php");
-include("../../includes/header.php");
 include_once("../../includes/fonctions-produits.php");
 
 // Vérifier la permission
 exiger_permission("creer_facture");
+include("../../includes/header.php");
 
 $produits = chargerProduits();
 $codesProduits = array_values(array_map(function($produit) {
@@ -19,13 +19,13 @@ $codesProduits = array_values(array_map(function($produit) {
 
 <h2>Scanner un Code-barres</h2>
 
-<div id="scanner-result" style="margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+<div id="scanner-result" class="scanner-result">
     <p>Cliquez sur le bouton ci-dessous pour ouvrir le scanner.</p>
     <p>Le code-barre détecté sera automatiquement copié dans le champ de la facture.</p>
 </div>
 
 <button type="button" class="btn btn-primary" onclick="openScannerCallback()">
-    📷 Ouvrir le Scanner
+    Ouvrir le scanner
 </button>
 
 <a href="nouvelle-facture.php" class="btn">Retour à la facturation</a>
@@ -36,13 +36,8 @@ const codesProduits = <?php echo json_encode($codesProduits, JSON_HEX_TAG | JSON
 
 function openScannerCallback() {
     window.Scanner.openScannerModal(function(codeBarre) {
-        // Afficher le résultat
         const resultDiv = document.getElementById('scanner-result');
-        resultDiv.innerHTML = `
-            <p style="color: green; font-weight: bold;">✓ Code-barre détecté!</p>
-            <p><strong>Code:</strong> ${codeBarre}</p>
-            <p>Redirection vers la page de facturation...</p>
-        `;
+        renderScannerResult(resultDiv, codeBarre, true);
         
         // Stocker le code-barre pour la page de facturation
         localStorage.setItem('codeBarreScanne', codeBarre);
@@ -61,14 +56,49 @@ function openScannerCallback() {
 document.addEventListener('DOMContentLoaded', function() {
     const savedCode = localStorage.getItem('codeBarreScanne');
     if (savedCode) {
-        const resultDiv = document.getElementById('scanner-result');
-        resultDiv.innerHTML = `
-            <p style="color: blue;">📱 Code-barre précédent: <strong>${savedCode}</strong></p>
-            <button type="button" class="btn" onclick="utiliserCeCode()">Utiliser ce code</button>
-            <button type="button" class="btn" onclick="effacerCode()">Effacer</button>
-        `;
+        renderScannerResult(document.getElementById('scanner-result'), savedCode, false);
     }
 });
+
+function renderScannerResult(container, code, redirecting) {
+    container.replaceChildren();
+
+    const title = document.createElement('p');
+    title.className = redirecting ? 'result-success' : 'result-info';
+    title.textContent = redirecting ? 'Code-barre détecté.' : 'Code-barre précédent';
+
+    const codeLine = document.createElement('p');
+    const label = document.createElement('strong');
+    label.textContent = 'Code : ';
+    codeLine.append(label, document.createTextNode(code));
+
+    container.append(title, codeLine);
+
+    if (redirecting) {
+        const message = document.createElement('p');
+        message.textContent = 'Redirection vers la page de facturation...';
+        container.appendChild(message);
+        return;
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'inline-actions';
+
+    const useButton = document.createElement('button');
+    useButton.type = 'button';
+    useButton.className = 'btn';
+    useButton.textContent = 'Utiliser ce code';
+    useButton.addEventListener('click', utiliserCeCode);
+
+    const clearButton = document.createElement('button');
+    clearButton.type = 'button';
+    clearButton.className = 'btn btn-danger';
+    clearButton.textContent = 'Effacer';
+    clearButton.addEventListener('click', effacerCode);
+
+    actions.append(useButton, clearButton);
+    container.appendChild(actions);
+}
 
 function utiliserCeCode() {
     const code = localStorage.getItem('codeBarreScanne');

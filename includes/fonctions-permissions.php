@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . "/../config/config.php");
 
 // Matrice des permissions par rôle
 $permissions = [
@@ -69,7 +70,7 @@ function verifier_permission($action, $role = null) {
  */
 function exiger_permission($action) {
     if (!verifier_permission($action)) {
-        header('Location: ../dashboard.php?erreur=acces_refuse');
+        header("Location: " . BASE_URL . "/dashboard.php?erreur=acces_refuse");
         exit();
     }
 }

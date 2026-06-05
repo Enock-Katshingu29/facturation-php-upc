@@ -8,9 +8,9 @@ if ($base_url === '/') $base_url = '';
 include("includes/header.php"); // Menu et header
 
 // Charger les données
-$produits = json_decode(file_get_contents("data/produits.json"), true);
-$factures = json_decode(file_get_contents("data/factures.json"), true);
-$utilisateurs = json_decode(file_get_contents("data/utilisateurs.json"), true);
+$produits = json_decode(file_get_contents("data/produits.json"), true) ?: [];
+$factures = json_decode(file_get_contents("data/factures.json"), true) ?: [];
+$utilisateurs = json_decode(file_get_contents("data/utilisateurs.json"), true) ?: [];
 
 $dateJour = date("Y-m-d");
 $nbProduits = count($produits);
@@ -38,6 +38,10 @@ foreach ($factures as $f) {
 ?>
 
 <h2>Tableau de Bord - <?php echo ucfirst($_SESSION["role"]); ?></h2>
+
+<?php if (($_GET["erreur"] ?? "") === "acces_refuse"): ?>
+    <p class="alert alert-error">Vous n'avez pas la permission d'accéder à cette page.</p>
+<?php endif; ?>
 
 <?php if ($_SESSION["role"] === "caissier"): ?>
     <!-- DASHBOARD CAISSIER -->

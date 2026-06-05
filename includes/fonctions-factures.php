@@ -34,11 +34,17 @@ function genererIdFacture() {
  * Créer une nouvelle facture avec décrémentation du stock
  * @param array $articles Tableau des articles [code_barre, quantite, prix, nom]
  * @param string $caissier Identifiant du caissier
+ * @param string $nomClient Nom du client
  * @return array [bool $succes, string $message, array $facture|null]
  */
-function creerFacture($articles, $caissier) {
+function creerFacture($articles, $caissier, $nomClient = "Client comptoir") {
     // Charger les produits pour vérifier le stock
     include_once(__DIR__ . '/fonctions-produits.php');
+
+    $nomClient = trim($nomClient);
+    if ($nomClient === '') {
+        return [false, "Le nom du client est obligatoire", null];
+    }
     
     $articlesValides = [];
     $total_ht = 0;
@@ -85,6 +91,7 @@ function creerFacture($articles, $caissier) {
         'date' => date('Y-m-d'),
         'heure' => date('H:i:s'),
         'caissier' => $caissier,
+        'client' => $nomClient,
         'articles' => $articlesValides,
         'total_ht' => $total_ht,
         'tva' => $tva,
@@ -95,7 +102,7 @@ function creerFacture($articles, $caissier) {
     $factures = chargerFactures();
     $factures[] = $facture;
     
-    if (file_put_contents(FICHIER_FACTURES, json_encode($factures, JSON_PRETTY_PRINT)) === false) {
+    if (file_put_contents(FICHIER_FACTURES, json_encode($factures, JSON_PRETTY_PRINT), LOCK_EX) === false) {
         return [false, "Erreur lors de l'enregistrement de la facture", null];
     }
     
@@ -272,7 +279,7 @@ function annulerFacture($id_facture) {
         return $f['id_facture'] !== $id_facture;
     });
     
-    if (file_put_contents(FICHIER_FACTURES, json_encode(array_values($nouvellesFactures), JSON_PRETTY_PRINT)) === false) {
+    if (file_put_contents(FICHIER_FACTURES, json_encode(array_values($nouvellesFactures), JSON_PRETTY_PRINT), LOCK_EX) === false) {
         return [false, "Erreur lors de l'annulation de la facture"];
     }
     

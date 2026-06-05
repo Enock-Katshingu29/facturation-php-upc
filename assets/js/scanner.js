@@ -105,6 +105,44 @@ function getCameraErrorMessage(error) {
     return error.message || "Impossible de démarrer le scanner.";
 }
 
+function getQuaggaReaders() {
+    const knownCodes = scanOptions.knownCodes || [];
+    const readers = [];
+
+    if (knownCodes.length === 0 || knownCodes.some(code => /^\d{13}$/.test(code))) {
+        readers.push("ean_reader");
+    }
+
+    if (knownCodes.length === 0 || knownCodes.some(code => /^\d{8}$/.test(code))) {
+        readers.push("ean_8_reader");
+    }
+
+    if (knownCodes.length === 0 || knownCodes.some(code => /[a-z]/i.test(code))) {
+        readers.push("code_128_reader", "code_39_reader");
+    }
+
+    return readers.length > 0 ? readers : ["ean_reader", "ean_8_reader"];
+}
+
+function getNativeBarcodeFormats() {
+    const knownCodes = scanOptions.knownCodes || [];
+    const formats = [];
+
+    if (knownCodes.length === 0 || knownCodes.some(code => /^\d{13}$/.test(code))) {
+        formats.push("ean_13");
+    }
+
+    if (knownCodes.length === 0 || knownCodes.some(code => /^\d{8}$/.test(code))) {
+        formats.push("ean_8");
+    }
+
+    if (knownCodes.length === 0 || knownCodes.some(code => /[a-z]/i.test(code))) {
+        formats.push("code_128", "code_39");
+    }
+
+    return formats.length > 0 ? formats : ["ean_13", "ean_8"];
+}
+
 /**
  * Initialiser le scanner avec la caméra
  * @param {string} targetElement - ID de l'élément cible pour le scanner
@@ -157,27 +195,26 @@ async function initScanner(targetElement, successCallback, errorCallback) {
                 type: "LiveStream",
                 target: target,
                 constraints: {
-                    width: { ideal: 640 },
-                    height: { ideal: 480 },
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 },
                     facingMode: "environment" // Utiliser la caméra arrière si disponible
+                },
+                area: {
+                    top: "18%",
+                    right: "15%",
+                    bottom: "18%",
+                    left: "15%"
                 }
             },
-            numOfWorkers: navigator.hardwareConcurrency ? Math.min(navigator.hardwareConcurrency, 4) : 2,
-            frequency: 10,
+            numOfWorkers: navigator.hardwareConcurrency ? Math.min(navigator.hardwareConcurrency, 2) : 1,
+            frequency: 6,
             decoder: {
-                readers: [
-                    "ean_reader",
-                    "ean_8_reader",
-                    "code_128_reader",
-                    "code_39_reader",
-                    "upc_reader",
-                    "upc_e_reader"
-                ]
+                readers: getQuaggaReaders()
             },
             locate: true,
             locator: {
-                patchSize: "medium",
-                halfSample: true
+                patchSize: "large",
+                halfSample: false
             }
         }, function(err) {
             if (sessionId !== scannerSessionId || !target.isConnected) {
@@ -290,9 +327,28 @@ function updateScanStatus(message, color = '#4d5b68') {
     }
 }
 
+function countScanCandidate(code, resetAfter = 1500) {
+    const candidate = scanCandidates.get(code) || { count: 0, lastSeen: 0 };
+    const now = Date.now();
+    const count = now - candidate.lastSeen > resetAfter ? 1 : candidate.count + 1;
+
+    scanCandidates.set(code, { count, lastSeen: now });
+    return count;
+}
+
 function shouldAcceptScannedCode(code, result) {
     if (!isKnownProductCode(code)) {
-        updateScanStatus(`Code lu ${code}, mais absent du catalogue. Réessayez.`, '#c0392b');
+        const count = countScanCandidate(code);
+
+        if (count >= 3) {
+            updateScanStatus(
+                `Code ${code} détecté, mais ce produit n'est pas enregistré dans le catalogue.`,
+                '#c0392b'
+            );
+        } else {
+            updateScanStatus('Analyse du code... gardez les barres nettes et horizontales.');
+        }
+
         return false;
     }
 
@@ -313,12 +369,9 @@ function shouldAcceptScannedCode(code, result) {
         return false;
     }
 
-    const candidate = scanCandidates.get(code) || { count: 0, lastSeen: 0 };
-    const now = Date.now();
-    const count = now - candidate.lastSeen > 1500 ? 1 : candidate.count + 1;
+    const count = countScanCandidate(code);
     const requiredReads = scanOptions.requiredReads;
 
-    scanCandidates.set(code, { count, lastSeen: now });
     updateScanStatus(`Vérification du code ${code}... ${count}/${requiredReads}`);
 
     return count >= requiredReads;
@@ -440,7 +493,7 @@ class SimpleBarcodeScanner {
                 throw new Error('Scanner natif non supporté');
             }
 
-            let formats = ['ean_13', 'ean_8', 'code_128', 'code_39', 'upc_a', 'upc_e'];
+            let formats = getNativeBarcodeFormats();
 
             if (typeof BarcodeDetector.getSupportedFormats === 'function') {
                 const supportedFormats = await BarcodeDetector.getSupportedFormats();

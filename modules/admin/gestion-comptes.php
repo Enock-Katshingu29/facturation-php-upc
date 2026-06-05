@@ -1,16 +1,19 @@
 <?php
 include("../../auth/session.php");
 include("../../includes/fonctions-permissions.php");
-include("../../includes/header.php");
+include_once("../../includes/fonctions-auth.php");
 
 // Vérifier la permission
 exiger_permission("gestion_comptes");
+include("../../includes/header.php");
 
-$utilisateurs = json_decode(file_get_contents("../../data/utilisateurs.json"), true);
+$utilisateurs = chargerUtilisateurs();
 ?>
 
 <h2>Liste des utilisateurs</h2>
-<table border='1'>
+<p><a class="btn" href="ajouter-compte.php">Ajouter un compte</a></p>
+
+<table>
 <tr><th>Identifiant</th><th>Nom complet</th><th>Rôle</th><th>Date création</th><th>Actif</th><th>Action</th></tr>
 
 <?php foreach ($utilisateurs as $u): ?>
@@ -21,15 +24,12 @@ $utilisateurs = json_decode(file_get_contents("../../data/utilisateurs.json"), t
     <td><?php echo htmlspecialchars($u['date_creation']); ?></td>
     <td><?php echo $u['actif'] ? 'Oui' : 'Non'; ?></td>
     <td>
-      <a href="ajouter-compte.php">Ajouter</a> | 
-      <a href="supprimer-compte.php?identifiant=<?php echo urlencode($u['identifiant']); ?>" onclick="return confirm('Supprimer ce compte?')">Supprimer</a>
+      <a href="supprimer-compte.php">Gérer la suppression</a>
     </td>
   </tr>
 <?php endforeach; ?>
 
 </table>
-
-<p><a href="ajouter-compte.php">+ Ajouter un nouveau compte</a></p>
 
 <?php
 include("../../includes/footer.php");

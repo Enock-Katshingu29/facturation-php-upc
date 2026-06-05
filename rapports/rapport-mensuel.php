@@ -1,13 +1,13 @@
 <?php
 include("../auth/session.php");
 include("../includes/fonctions-permissions.php");
-include("../includes/header.php");
 
 // Vérifier la permission
 exiger_permission("rapport_mensuel");
+include("../includes/header.php");
 
 // Charger les factures
-$factures = json_decode(file_get_contents("../data/factures.json"), true);
+$factures = json_decode(file_get_contents("../data/factures.json"), true) ?: [];
 
 // Déterminer le mois en cours (ex: "2026-04")
 $mois = date("Y-m");
@@ -17,8 +17,11 @@ $nb_factures = 0;
 ?>
 
 <h2>Rapport Mensuel - <?php echo $mois; ?></h2>
-<table border='1'>
+<table>
+<thead>
 <tr><th>Date</th><th>ID Facture</th><th>Caissier</th><th>Total HT</th><th>TVA</th><th>Total TTC</th></tr>
+</thead>
+<tbody>
 
 <?php foreach ($factures as $f): ?>
   <?php if (strpos($f["date"], $mois) === 0): ?>
@@ -36,10 +39,13 @@ $nb_factures = 0;
   endif; ?>
 <?php endforeach; ?>
 
+</tbody>
 </table>
 
-<p>Nombre de factures : <?php echo $nb_factures; ?></p>
-<p>Chiffre d'affaires du mois : <?php echo number_format($total_mensuel, 0, ',', ' '); ?> CDF</p>
+<div class="report-summary">
+  <p>Nombre de factures : <strong><?php echo $nb_factures; ?></strong></p>
+  <p>Chiffre d'affaires du mois : <strong><?php echo number_format($total_mensuel, 0, ',', ' '); ?> CDF</strong></p>
+</div>
 
 <?php
 include("../includes/footer.php");

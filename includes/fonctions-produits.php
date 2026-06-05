@@ -61,7 +61,7 @@ function ajouterProduit($produit) {
     
     $produits[] = $produit;
     
-    return file_put_contents(FICHIER_PRODUITS, json_encode($produits, JSON_PRETTY_PRINT)) !== false;
+    return file_put_contents(FICHIER_PRODUITS, json_encode($produits, JSON_PRETTY_PRINT), LOCK_EX) !== false;
 }
 
 /**
@@ -76,7 +76,7 @@ function modifierProduit($code_barre, $nouvellesDonnees) {
     foreach ($produits as &$produit) {
         if ($produit['code_barre'] === $code_barre) {
             $produit = array_merge($produit, $nouvellesDonnees);
-            return file_put_contents(FICHIER_PRODUITS, json_encode($produits, JSON_PRETTY_PRINT)) !== false;
+            return file_put_contents(FICHIER_PRODUITS, json_encode($produits, JSON_PRETTY_PRINT), LOCK_EX) !== false;
         }
     }
     
@@ -99,7 +99,7 @@ function supprimerProduit($code_barre) {
         return false; // Produit non trouvé
     }
     
-    return file_put_contents(FICHIER_PRODUITS, json_encode(array_values($nouveauxProduits), JSON_PRETTY_PRINT)) !== false;
+    return file_put_contents(FICHIER_PRODUITS, json_encode(array_values($nouveauxProduits), JSON_PRETTY_PRINT), LOCK_EX) !== false;
 }
 
 /**
@@ -136,7 +136,7 @@ function decrementerStock($code_barre, $quantite) {
             }
             
             $produit['quantite_stock'] = $nouveauStock;
-            return file_put_contents(FICHIER_PRODUITS, json_encode($produits, JSON_PRETTY_PRINT)) !== false;
+            return file_put_contents(FICHIER_PRODUITS, json_encode($produits, JSON_PRETTY_PRINT), LOCK_EX) !== false;
         }
     }
     
@@ -155,7 +155,7 @@ function incrementerStock($code_barre, $quantite) {
     foreach ($produits as &$produit) {
         if ($produit['code_barre'] === $code_barre) {
             $produit['quantite_stock'] += $quantite;
-            return file_put_contents(FICHIER_PRODUITS, json_encode($produits, JSON_PRETTY_PRINT)) !== false;
+            return file_put_contents(FICHIER_PRODUITS, json_encode($produits, JSON_PRETTY_PRINT), LOCK_EX) !== false;
         }
     }
     

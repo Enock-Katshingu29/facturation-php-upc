@@ -1,55 +1,45 @@
 <?php
 include("../../auth/session.php");
 include("../../includes/fonctions-permissions.php");
-include("../../includes/header.php");
+include_once("../../includes/fonctions-auth.php");
 
 // Vérifier la permission
 exiger_permission("gestion_comptes");
+include("../../includes/header.php");
 
 $message = "";
 $erreur = "";
 
-// Traitement de la suppression
-if (isset($_GET['identifiant'])) {
-    $utilisateurs = json_decode(file_get_contents("../../data/utilisateurs.json"), true);
-    $identifiant_a_supprimer = $_GET['identifiant'];
-    
-    $nouveaux_utilisateurs = [];
-    foreach ($utilisateurs as $u) {
-        if ($u['identifiant'] !== $identifiant_a_supprimer) {
-            $nouveaux_utilisateurs[] = $u;
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $identifiantASupprimer = trim($_POST["identifiant"] ?? "");
+
+    if ($identifiantASupprimer === ($_SESSION["identifiant"] ?? "")) {
+        $erreur = "Vous ne pouvez pas supprimer votre propre compte.";
+    } else {
+        [$succes, $resultat] = supprimerUtilisateur($identifiantASupprimer);
+        if ($succes) {
+            $message = $resultat;
+        } else {
+            $erreur = $resultat;
         }
     }
-    
-    file_put_contents("../../data/utilisateurs.json", json_encode($nouveaux_utilisateurs, JSON_PRETTY_PRINT));
-    $message = "Utilisateur supprimé avec succès !";
 }
 
-$utilisateurs = json_decode(file_get_contents("../../data/utilisateurs.json"), true);
-
-// Exemple : création d’un nouveau caissier
-$nouvel_utilisateur = [
-    "identifiant" => "paul.kongo",
-    "mot_de_passe" => password_hash("MotDePasse123", PASSWORD_DEFAULT),
-    "role" => "caissier",
-    "nom_complet" => "Paul Kongo",
-    "date_creation" => date("Y-m-d"),
-    "actif" => true
-];
-
-// Ajouter au fichier
-$utilisateurs[] = $nouvel_utilisateur;
-file_put_contents("../data/utilisateurs.json", json_encode($utilisateurs, JSON_PRETTY_PRINT));
+$utilisateurs = chargerUtilisateurs();
 
 ?>
 
 <h2>Supprimer un compte utilisateur</h2>
 
 <?php if ($message): ?>
-  <p style="color: green;"><?php echo htmlspecialchars($message); ?></p>
+  <p class="alert alert-success"><?php echo htmlspecialchars($message); ?></p>
 <?php endif; ?>
 
-<table border='1'>
+<?php if ($erreur): ?>
+  <p class="alert alert-error"><?php echo htmlspecialchars($erreur); ?></p>
+<?php endif; ?>
+
+<table>
 <tr><th>Identifiant</th><th>Nom complet</th><th>Rôle</th><th>Action</th></tr>
 
 <?php foreach ($utilisateurs as $u): ?>
@@ -57,7 +47,16 @@ file_put_contents("../data/utilisateurs.json", json_encode($utilisateurs, JSON_P
     <td><?php echo htmlspecialchars($u['identifiant']); ?></td>
     <td><?php echo htmlspecialchars($u['nom_complet']); ?></td>
     <td><?php echo htmlspecialchars($u['role']); ?></td>
-    <td><a href="?identifiant=<?php echo urlencode($u['identifiant']); ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce compte ?')">Supprimer</a></td>
+    <td>
+      <?php if ($u["identifiant"] === ($_SESSION["identifiant"] ?? "")): ?>
+        Compte actuel
+      <?php else: ?>
+        <form method="post" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce compte ?')">
+          <input type="hidden" name="identifiant" value="<?php echo htmlspecialchars($u["identifiant"], ENT_QUOTES, "UTF-8"); ?>">
+          <button type="submit" class="btn-small">Supprimer</button>
+        </form>
+      <?php endif; ?>
+    </td>
   </tr>
 <?php endforeach; ?>
 

@@ -4,7 +4,7 @@ define("TVA", 0.18);
 define("DATA_PRODUITS", __DIR__ . "/../data/produits.json");
 define("DATA_FACTURES", __DIR__ . "/../data/factures.json");
 define("DATA_UTILISATEURS", __DIR__ . "/../data/utilisateurs.json");
-define("BASE_URL","/facturation/");
+define("BASE_URL", "/facturation");
 
 /**
  * Retourne l'URL de base du projet

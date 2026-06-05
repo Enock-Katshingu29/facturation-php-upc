@@ -303,5 +303,78 @@
         "total_ht": 5000,
         "tva": 900,
         "total_ttc": 5900
+    },
+    {
+        "id_facture": "FAC-20260605-132338",
+        "date": "2026-06-05",
+        "heure": "13:23:38",
+        "caissier": "dan.mbo",
+        "articles": [
+            {
+                "code_barre": "90338052",
+                "nom": "COCA BOUTEILLE",
+                "prix_unitaire_ht": 1000,
+                "quantite": 1,
+                "sous_total_ht": 1000
+            }
+        ],
+        "total_ht": 1000,
+        "tva": 180,
+        "total_ttc": 1180
+    },
+    {
+        "id_facture": "FAC-20260605-135134",
+        "date": "2026-06-05",
+        "heure": "13:51:34",
+        "caissier": "dan.mbo",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 1,
+                "sous_total_ht": 1200
+            }
+        ],
+        "total_ht": 1200,
+        "tva": 216,
+        "total_ttc": 1416
+    },
+    {
+        "id_facture": "FAC-20260605-135718",
+        "date": "2026-06-05",
+        "heure": "13:57:18",
+        "caissier": "Enock.katshingu",
+        "articles": [
+            {
+                "code_barre": "8991389878040",
+                "nom": "cahier",
+                "prix_unitaire_ht": 2344,
+                "quantite": 10,
+                "sous_total_ht": 23440
+            }
+        ],
+        "total_ht": 23440,
+        "tva": 4219.2,
+        "total_ttc": 27659.2
+    },
+    {
+        "id_facture": "FAC-20260605-141221",
+        "date": "2026-06-05",
+        "heure": "14:12:21",
+        "caissier": "Enock.katshingu",
+        "client": "kabila",
+        "articles": [
+            {
+                "code_barre": "8991389878040",
+                "nom": "cahier",
+                "prix_unitaire_ht": 2344,
+                "quantite": 1,
+                "sous_total_ht": 2344
+            }
+        ],
+        "total_ht": 2344,
+        "tva": 421.91999999999996,
+        "total_ttc": 2765.92
     }
 ]

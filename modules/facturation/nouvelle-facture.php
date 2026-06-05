@@ -5,7 +5,6 @@
  */
 include("../../auth/session.php");
 include("../../includes/fonctions-permissions.php");
-include("../../includes/header.php");
 
 // Vérifier la permission
 exiger_permission("creer_facture");
@@ -13,13 +12,14 @@ exiger_permission("creer_facture");
 // Charger les fonctions produits et factures
 include_once("../../includes/fonctions-produits.php");
 include_once("../../includes/fonctions-factures.php");
+include("../../includes/header.php");
 
 $message = "";
 $erreur = "";
 $factureCreee = null;
 
 // Vérifier si un code-barre a été passé en paramètre (depuis le scanner)
-$codeBarreScanne = $_GET['code'] ?? '';
+$codeBarreScanne = trim($_GET['code'] ?? '');
 
 // Traitement du formulaire
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"])) {
@@ -29,23 +29,41 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"])) {
             $_SESSION["panier"] = [];
         }
         
-        $code_barre = $_POST["code_barre"];
-        $quantite = (int)$_POST["quantite"];
+        $code_barre = trim($_POST["code_barre"] ?? "");
+        $quantite = (int)($_POST["quantite"] ?? 0);
         
         // Vérifier le produit
         $produit = getProduitParCodeBarre($code_barre);
-        if ($produit === null) {
+        if ($quantite < 1) {
+            $erreur = "La quantité doit être supérieure à zéro.";
+        } elseif ($produit === null) {
             $erreur = "Produit non trouvé.";
         } elseif (!verifierStock($code_barre, $quantite)) {
             $erreur = "Stock insuffisant. Disponible: " . $produit["quantite_stock"];
         } else {
-            // Ajouter au panier
-            $_SESSION["panier"][] = [
-                "code_barre" => $code_barre,
-                "nom" => $produit["nom"],
-                "prix_unitaire_ht" => $produit["prix_unitaire_ht"],
-                "quantite" => $quantite
-            ];
+            $articleExistant = false;
+            foreach ($_SESSION["panier"] as &$item) {
+                if ($item["code_barre"] === $code_barre) {
+                    $nouvelleQuantite = $item["quantite"] + $quantite;
+                    if (!verifierStock($code_barre, $nouvelleQuantite)) {
+                        $erreur = "Stock insuffisant. Disponible: " . $produit["quantite_stock"];
+                    } else {
+                        $item["quantite"] = $nouvelleQuantite;
+                    }
+                    $articleExistant = true;
+                    break;
+                }
+            }
+            unset($item);
+
+            if (!$articleExistant) {
+                $_SESSION["panier"][] = [
+                    "code_barre" => $code_barre,
+                    "nom" => $produit["nom"],
+                    "prix_unitaire_ht" => $produit["prix_unitaire_ht"],
+                    "quantite" => $quantite
+                ];
+            }
         }
     }
     elseif ($_POST["action"] === "supprimer") {
@@ -55,9 +73,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"])) {
         }
     }
     elseif ($_POST["action"] === "valider") {
+        $nomClient = trim($_POST["nom_client"] ?? "");
+
         // Créer la facture
         if (empty($_SESSION["panier"])) {
             $erreur = "Le panier est vide.";
+        } elseif ($nomClient === "") {
+            $erreur = "Le nom du client est obligatoire.";
+        } elseif (strlen($nomClient) > 120) {
+            $erreur = "Le nom du client est trop long.";
         } else {
             $articles = [];
             foreach ($_SESSION["panier"] as $item) {
@@ -67,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"])) {
                 ];
             }
             
-            $result = creerFacture($articles, $_SESSION["identifiant"]);
+            $result = creerFacture($articles, $_SESSION["identifiant"], $nomClient);
             
             if ($result[0]) {
                 $message = $result[1];
@@ -98,20 +122,28 @@ $codesProduits = array_values(array_map(function($produit) {
 <h2>Nouvelle Facture</h2>
 
 <?php if ($message): ?>
-    <p style="color: green;"><?php echo htmlspecialchars($message); ?></p>
+    <p class="alert alert-success"><?php echo htmlspecialchars($message); ?></p>
 <?php endif; ?>
 
 <?php if ($erreur): ?>
-    <p style="color: red;"><?php echo htmlspecialchars($erreur); ?></p>
+    <p class="alert alert-error"><?php echo htmlspecialchars($erreur); ?></p>
 <?php endif; ?>
 
 <?php if ($factureCreee): ?>
-    <!-- Facture créée - affichage du reçu -->
-    <div class="facture-recu">
-        <h3>Reçu de Facture</h3>
-        <p><strong>ID:</strong> <?php echo htmlspecialchars($factureCreee["id_facture"]); ?></p>
-        <p><strong>Date:</strong> <?php echo htmlspecialchars($factureCreee["date"]); ?> à <?php echo htmlspecialchars($factureCreee["heure"]); ?></p>
-        <p><strong>Caissier:</strong> <?php echo htmlspecialchars($factureCreee["caissier"]); ?></p>
+    <section class="facture-recu" id="facture-imprimable">
+        <div class="recu-entete">
+            <div>
+                <p class="recu-marque">KIMA S.A</p>
+                <h3>Récapitulatif de facture</h3>
+            </div>
+            <p class="recu-reference"><?php echo htmlspecialchars($factureCreee["id_facture"]); ?></p>
+        </div>
+
+        <div class="recu-informations">
+            <p><span>Client</span><strong><?php echo htmlspecialchars($factureCreee["client"]); ?></strong></p>
+            <p><span>Date</span><strong><?php echo htmlspecialchars($factureCreee["date"]); ?> à <?php echo htmlspecialchars($factureCreee["heure"]); ?></strong></p>
+            <p><span>Caissier</span><strong><?php echo htmlspecialchars($factureCreee["caissier"]); ?></strong></p>
+        </div>
         
         <table>
             <thead>
@@ -134,23 +166,30 @@ $codesProduits = array_values(array_map(function($produit) {
             </tbody>
         </table>
         
-        <p><strong>Total HT:</strong> <?php echo number_format($factureCreee["total_ht"], 0, ',', ' '); ?> CDF</p>
-        <p><strong>TVA (18%):</strong> <?php echo number_format($factureCreee["tva"], 0, ',', ' '); ?> CDF</p>
-        <p><strong>Total TTC:</strong> <?php echo number_format($factureCreee["total_ttc"], 0, ',', ' '); ?> CDF</p>
-        
-        <a href="nouvelle-facture.php" class="btn">Nouvelle Facture</a>
+        <div class="recu-totaux">
+            <p><span>Total HT</span><strong><?php echo number_format($factureCreee["total_ht"], 0, ',', ' '); ?> CDF</strong></p>
+            <p><span>TVA (18%)</span><strong><?php echo number_format($factureCreee["tva"], 0, ',', ' '); ?> CDF</strong></p>
+            <p class="recu-total-ttc"><span>Total TTC</span><strong><?php echo number_format($factureCreee["total_ttc"], 0, ',', ' '); ?> CDF</strong></p>
+        </div>
+
+        <p class="recu-merci">Merci pour votre achat.</p>
+    </section>
+
+    <div class="recu-actions no-print">
+        <button type="button" class="btn btn-primary" onclick="window.print()">Imprimer le récapitulatif</button>
+        <a href="nouvelle-facture.php" class="btn">Nouvelle facture</a>
     </div>
 <?php else: ?>
     <!-- Formulaire d'ajout d'article -->
     <div class="ajout-article">
-        <h3>➕ Ajouter un article</h3>
+        <h3>Ajouter un article</h3>
         
         <!-- Bouton pour ouvrir le scanner -->
-        <button type="button" class="btn btn-primary" onclick="openScannerForFacture()" style="width: 100%; margin-bottom: 1rem;">
-            📷 Scanner un code-barres
+        <button type="button" class="btn btn-primary btn-block scanner-trigger" onclick="openScannerForFacture()">
+            Scanner un code-barres
         </button>
         
-        <form method="post" style="margin-top: 1rem;">
+        <form method="post">
             <input type="hidden" name="action" value="ajouter">
             
             <label for="code_barre">Code-barre du produit:</label>
@@ -160,8 +199,10 @@ $codesProduits = array_values(array_map(function($produit) {
             <label for="quantite">Quantité:</label>
             <input type="number" name="quantite" id="quantite" value="1" min="1" required>
             
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Ajouter au panier</button>
+            <button type="submit" class="btn btn-primary btn-block">Ajouter au panier</button>
         </form>
+    </div>
+
     <!-- Panier -->
     <div class="panier">
         <div class="panier-entete">
@@ -238,14 +279,18 @@ $codesProduits = array_values(array_map(function($produit) {
             
             <!-- Boutons d'action -->
             <div class="actions-facture">
-                <form method="post">
+                <form method="post" class="validation-facture">
                     <input type="hidden" name="action" value="valider">
-                    <button type="submit" class="btn btn-primary">✓ Valider et créer la facture</button>
+                    <label for="nom_client">Nom du client</label>
+                    <input type="text" name="nom_client" id="nom_client" maxlength="120"
+                           value="<?php echo htmlspecialchars($_POST["nom_client"] ?? "", ENT_QUOTES, "UTF-8"); ?>"
+                           placeholder="Ex: Jean Kabila" required>
+                    <button type="submit" class="btn btn-primary">Valider et créer la facture</button>
                 </form>
                 
                 <form method="post">
                     <input type="hidden" name="action" value="annuler">
-                    <button type="submit" class="btn btn-danger">✕ Annuler le panier</button>
+                    <button type="submit" class="btn btn-danger">Annuler le panier</button>
                 </form>
             </div>
         <?php endif; ?>

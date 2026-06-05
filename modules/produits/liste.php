@@ -1,10 +1,10 @@
 <?php
 include("../../auth/session.php");
 include("../../includes/fonctions-permissions.php");
-include("../../includes/header.php");
 
 // Vérifier la permission
 exiger_permission("voir_produits");
+include("../../includes/header.php");
 
 $produits = json_decode(file_get_contents("../../data/produits.json"), true);
 

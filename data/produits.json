@@ -3,7 +3,7 @@
         "code_barre": "3017620422003",
         "nom": "Huile de palme 1L",
         "prix_unitaire_ht": 1200,
-        "quantite_stock": 22,
+        "quantite_stock": 21,
         "date_expiration": "2026-12-31",
         "date_enregistrement": "2026-04-17"
     },
@@ -11,7 +11,7 @@
         "code_barre": "90338052",
         "nom": "COCA BOUTEILLE",
         "prix_unitaire_ht": 1000,
-        "quantite_stock": 20,
+        "quantite_stock": 19,
         "date_expiration": "2026-04-28",
         "date_enregistrement": "2026-04-28"
     },
@@ -30,5 +30,13 @@
         "quantite_stock": 40,
         "date_expiration": "2027-03-28",
         "date_enregistrement": "2026-05-29"
+    },
+    {
+        "code_barre": "8991389878040",
+        "nom": "cahier",
+        "prix_unitaire_ht": 2344,
+        "quantite_stock": 19,
+        "date_expiration": "2027-09-05",
+        "date_enregistrement": "2026-06-05"
     }
 ]
