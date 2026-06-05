@@ -90,6 +90,9 @@ if (!isset($_SESSION["panier"])) {
 }
 
 $produits = chargerProduits();
+$codesProduits = array_values(array_map(function($produit) {
+    return (string)($produit["code_barre"] ?? "");
+}, $produits));
 ?>
 
 <h2>Nouvelle Facture</h2>
@@ -140,112 +143,109 @@ $produits = chargerProduits();
 <?php else: ?>
     <!-- Formulaire d'ajout d'article -->
     <div class="ajout-article">
-        <h3>Ajouter un article</h3>
+        <h3>➕ Ajouter un article</h3>
         
         <!-- Bouton pour ouvrir le scanner -->
-        <button type="button" class="btn btn-primary" onclick="openScannerModal(function(code) {
-            document.getElementById('code_barre').value = code;
-        })">
+        <button type="button" class="btn btn-primary" onclick="openScannerForFacture()" style="width: 100%; margin-bottom: 1rem;">
             📷 Scanner un code-barres
         </button>
         
-        <form method="post" style="margin-top: 15px;">
+        <form method="post" style="margin-top: 1rem;">
             <input type="hidden" name="action" value="ajouter">
             
             <label for="code_barre">Code-barre du produit:</label>
-            <input type="text" name="code_barre" id="code_barre" required placeholder="Entrez le code-barre" 
+            <input type="text" name="code_barre" id="code_barre" required placeholder="Entrez ou scannez un code-barre"
                    value="<?php echo htmlspecialchars($codeBarreScanne); ?>">
             
             <label for="quantite">Quantité:</label>
             <input type="number" name="quantite" id="quantite" value="1" min="1" required>
             
-            <button type="submit" class="btn">Ajouter au panier</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Ajouter au panier</button>
         </form>
-        
-        <!-- Liste des produits disponibles -->
-        <h4>Produits disponibles:</h4>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-        <thead>
-            <tr style="background-color: #f0f0f0;">
-                <th style="border: 1px solid #ddd; padding: 10px;">Code Barre</th>
-                <th style="border: 1px solid #ddd; padding: 10px;">Nom</th>
-                <th style="border: 1px solid #ddd; padding: 10px;">Prix HT</th>
-                <th style="border: 1px solid #ddd; padding: 10px;">Stock</th>
-                <th style="border: 1px solid #ddd; padding: 10px;">Date Expiration</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($produits as $produit): ?>
-                <tr>
-                    <td style="border: 1px solid #ddd; padding: 10px;"><?php echo htmlspecialchars($produit["code_barre"] ?? ""); ?></td>
-                    <td style="border: 1px solid #ddd; padding: 10px;"><?php echo htmlspecialchars($produit["nom"] ?? ""); ?></td>
-                    <td style="border: 1px solid #ddd; padding: 10px;"><?php echo number_format($produit["prix_unitaire_ht"] ?? 0, 0, ',', ' '); ?> CDF</td>
-                    <td style="border: 1px solid #ddd; padding: 10px;"><?php echo $produit["quantite_stock"] ?? 0; ?></td>
-                    <td style="border: 1px solid #ddd; padding: 10px;"><?php echo htmlspecialchars($produit["date_expiration"] ?? ""); ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-
-    </div>
-    
     <!-- Panier -->
     <div class="panier">
-        <h3>Panier en cours</h3>
+        <div class="panier-entete">
+            <div>
+                <h3>Panier en cours</h3>
+                <p><?php echo count($_SESSION["panier"]); ?> article(s) ajouté(s)</p>
+            </div>
+            <span class="panier-badge"><?php echo count($_SESSION["panier"]); ?></span>
+        </div>
         
         <?php if (empty($_SESSION["panier"])): ?>
-            <p>Aucun article dans le panier.</p>
+            <div class="panier-vide">
+                <p>Aucun article dans le panier.</p>
+            </div>
         <?php else: ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Produit</th>
-                        <th>Prix Unit.</th>
-                        <th>Qté</th>
-                        <th>Total</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    $total_ht = 0;
-                    foreach ($_SESSION["panier"] as $index => $item): 
-                        $total_ht += $item["prix_unitaire_ht"] * $item["quantite"];
-                    ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($item["nom"]); ?></td>
-                        <td><?php echo number_format($item["prix_unitaire_ht"], 0, ',', ' '); ?> CDF</td>
-                        <td><?php echo $item["quantite"]; ?></td>
-                        <td><?php echo number_format($item["prix_unitaire_ht"] * $item["quantite"], 0, ',', ' '); ?> CDF</td>
-                        <td>
-                            <form method="post" style="display:inline;">
-                                <input type="hidden" name="action" value="supprimer">
-                                <input type="hidden" name="index" value="<?php echo $index; ?>">
-                                <button type="submit" class="btn btn-small">Supprimer</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <div class="panier-table-wrapper">
+                <table class="panier-table">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th class="text-right">Prix Unit.</th>
+                            <th class="text-center">Qté</th>
+                            <th class="text-right">Sous-total</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $total_ht = 0;
+                        foreach ($_SESSION["panier"] as $index => $item):
+                            $sous_total = $item["prix_unitaire_ht"] * $item["quantite"];
+                            $total_ht += $sous_total;
+                        ?>
+                        <tr>
+                            <td>
+                                <strong><?php echo htmlspecialchars($item["nom"]); ?></strong>
+                                <span class="panier-code"><?php echo htmlspecialchars($item["code_barre"]); ?></span>
+                            </td>
+                            <td class="text-right"><?php echo number_format($item["prix_unitaire_ht"], 0, ',', ' '); ?> CDF</td>
+                            <td class="text-center"><span class="quantite-badge"><?php echo $item["quantite"]; ?></span></td>
+                            <td class="text-right panier-sous-total"><?php echo number_format($sous_total, 0, ',', ' '); ?> CDF</td>
+                            <td class="text-center">
+                                <form method="post" class="panier-action-form">
+                                    <input type="hidden" name="action" value="supprimer">
+                                    <input type="hidden" name="index" value="<?php echo $index; ?>">
+                                    <button type="submit" class="btn-small">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
             
-            <?php 
-            $tva = $total_ht * 0.18;
-            $total_ttc = $total_ht + $tva;
-            ?>
-            <p><strong>Total HT:</strong> <?php echo number_format($total_ht, 0, ',', ' '); ?> CDF</p>
-            <p><strong>TVA (18%):</strong> <?php echo number_format($tva, 0, ',', ' '); ?> CDF</p>
-            <p><strong>Total TTC:</strong> <?php echo number_format($total_ttc, 0, ',', ' '); ?> CDF</p>
+            <!-- Récapitulatif des totaux -->
+            <div class="panier-totaux">
+                <p class="total-ht">
+                    <span>Total HT:</span>
+                    <strong><?php echo number_format($total_ht, 0, ',', ' '); ?> CDF</strong>
+                </p>
+                <?php
+                $tva = $total_ht * 0.18;
+                $total_ttc = $total_ht + $tva;
+                ?>
+                <p class="total-tva">
+                    <span>TVA (18%):</span>
+                    <strong><?php echo number_format($tva, 0, ',', ' '); ?> CDF</strong>
+                </p>
+                <p class="total-ttc">
+                    <span>Total TTC:</span>
+                    <strong><?php echo number_format($total_ttc, 0, ',', ' '); ?> CDF</strong>
+                </p>
+            </div>
             
+            <!-- Boutons d'action -->
             <div class="actions-facture">
-                <form method="post" style="display:inline;">
+                <form method="post">
                     <input type="hidden" name="action" value="valider">
-                    <button type="submit" class="btn btn-primary">Valider et créer la facture</button>
+                    <button type="submit" class="btn btn-primary">✓ Valider et créer la facture</button>
                 </form>
                 
-                <form method="post" style="display:inline;">
+                <form method="post">
                     <input type="hidden" name="action" value="annuler">
-                    <button type="submit" class="btn btn-danger">Annuler le panier</button>
+                    <button type="submit" class="btn btn-danger">✕ Annuler le panier</button>
                 </form>
             </div>
         <?php endif; ?>
@@ -254,8 +254,19 @@ $produits = chargerProduits();
 
 <!-- Script du scanner -->
 <script src="../../assets/js/scanner.js"></script>
-<!-- 🔥 LIBRAIRIE QUAGGAJS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+<script>
+const codesProduits = <?php echo json_encode($codesProduits, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
+
+function openScannerForFacture() {
+    window.Scanner.openScannerModal(function(code) {
+        document.getElementById('code_barre').value = code;
+        document.getElementById('quantite').focus();
+    }, {
+        knownCodes: codesProduits,
+        requiredReads: 3
+    });
+}
+</script>
 
 
 

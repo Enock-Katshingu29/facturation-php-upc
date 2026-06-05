@@ -6,9 +6,15 @@
 include("../../auth/session.php");
 include("../../includes/fonctions-permissions.php");
 include("../../includes/header.php");
+include_once("../../includes/fonctions-produits.php");
 
 // Vérifier la permission
 exiger_permission("creer_facture");
+
+$produits = chargerProduits();
+$codesProduits = array_values(array_map(function($produit) {
+    return (string)($produit["code_barre"] ?? "");
+}, $produits));
 ?>
 
 <h2>Scanner un Code-barres</h2>
@@ -18,7 +24,7 @@ exiger_permission("creer_facture");
     <p>Le code-barre détecté sera automatiquement copié dans le champ de la facture.</p>
 </div>
 
-<button type="button" class="btn btn-primary" onclick="openScannerWithCallback()">
+<button type="button" class="btn btn-primary" onclick="openScannerCallback()">
     📷 Ouvrir le Scanner
 </button>
 
@@ -26,7 +32,9 @@ exiger_permission("creer_facture");
 
 <script src="../../assets/js/scanner.js"></script>
 <script>
-function openScannerWithCallback() {
+const codesProduits = <?php echo json_encode($codesProduits, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
+
+function openScannerCallback() {
     window.Scanner.openScannerModal(function(codeBarre) {
         // Afficher le résultat
         const resultDiv = document.getElementById('scanner-result');
@@ -43,6 +51,9 @@ function openScannerWithCallback() {
         setTimeout(function() {
             window.location.href = 'nouvelle-facture.php';
         }, 2000);
+    }, {
+        knownCodes: codesProduits,
+        requiredReads: 3
     });
 }
 

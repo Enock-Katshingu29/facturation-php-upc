@@ -16,19 +16,27 @@
         "actif": true
     },
     {
-        "identifiant": "AUDREY",
-        "mot_de_passe": "$2y$10$QeK.3iQfUZlJ8fZMN5jVX.Ito5W7f8i5j.\/ohVeCSsOyALzBGp64W",
-        "role": "manager",
-        "nom_complet": "AUDREY MUSENGI",
-        "date_creation": "2026-04-28",
+        "identifiant": "paul.kongo",
+        "mot_de_passe": "$2y$10$wpClO8W0sIno4VnTtHDle.4rAqGGwXblF8YiIBlVF91zNfklJ.KJ.",
+        "role": "caissier",
+        "nom_complet": "Paul Kongo",
+        "date_creation": "2026-05-29",
         "actif": true
     },
     {
-        "identifiant": "carlos",
-        "mot_de_passe": "$2y$10$BcFJ5svqKri8HMN8GS7fQe5sWUrH1oDdq8zQNohaFL2br54TVgxUK",
+        "identifiant": "kas.king",
+        "mot_de_passe": "$2y$10$KpzxegMg1OHk\/\/eR.jiQquLjKco7Wv\/tMarIqMi6wdGF.uWaBui.K",
+        "role": "manager",
+        "nom_complet": "Exauce ntumba",
+        "date_creation": "2026-05-29",
+        "actif": true
+    },
+    {
+        "identifiant": "paul.kongo",
+        "mot_de_passe": "$2y$10$awgySzwYKZ\/AsmdKn6cRfeqG6YLwO7jQOzH\/QAyCpcFNwRxrTp2AC",
         "role": "caissier",
-        "nom_complet": "roberto carlos",
-        "date_creation": "2026-04-29",
+        "nom_complet": "Paul Kongo",
+        "date_creation": "2026-05-29",
         "actif": true
     }
 ]

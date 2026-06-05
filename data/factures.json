@@ -235,5 +235,73 @@
         "total_ht": 4400,
         "tva": 792,
         "total_ttc": 5192
+    },
+    {
+        "id_facture": "FAC-20260529-102531",
+        "date": "2026-05-29",
+        "heure": "10:25:31",
+        "caissier": "dan.mbo",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 2,
+                "sous_total_ht": 2400
+            }
+        ],
+        "total_ht": 2400,
+        "tva": 432,
+        "total_ttc": 2832
+    },
+    {
+        "id_facture": "FAC-20260529-102746",
+        "date": "2026-05-29",
+        "heure": "10:27:46",
+        "caissier": "dan.mbo",
+        "articles": [
+            {
+                "code_barre": "3017620422003",
+                "nom": "Huile de palme 1L",
+                "prix_unitaire_ht": 1200,
+                "quantite": 6,
+                "sous_total_ht": 7200
+            },
+            {
+                "code_barre": "6044000013992",
+                "nom": "EDEN EAU",
+                "prix_unitaire_ht": 499,
+                "quantite": 7,
+                "sous_total_ht": 3493
+            },
+            {
+                "code_barre": "90338052",
+                "nom": "COCA BOUTEILLE",
+                "prix_unitaire_ht": 1000,
+                "quantite": 5,
+                "sous_total_ht": 5000
+            }
+        ],
+        "total_ht": 15693,
+        "tva": 2824.74,
+        "total_ttc": 18517.739999999998
+    },
+    {
+        "id_facture": "FAC-20260605-124458",
+        "date": "2026-06-05",
+        "heure": "12:44:58",
+        "caissier": "dan.mbo",
+        "articles": [
+            {
+                "code_barre": "90338052",
+                "nom": "COCA BOUTEILLE",
+                "prix_unitaire_ht": 1000,
+                "quantite": 5,
+                "sous_total_ht": 5000
+            }
+        ],
+        "total_ht": 5000,
+        "tva": 900,
+        "total_ttc": 5900
     }
 ]

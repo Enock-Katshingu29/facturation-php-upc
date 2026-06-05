@@ -3,7 +3,7 @@
         "code_barre": "3017620422003",
         "nom": "Huile de palme 1L",
         "prix_unitaire_ht": 1200,
-        "quantite_stock": 30,
+        "quantite_stock": 22,
         "date_expiration": "2026-12-31",
         "date_enregistrement": "2026-04-17"
     },
@@ -11,7 +11,7 @@
         "code_barre": "90338052",
         "nom": "COCA BOUTEILLE",
         "prix_unitaire_ht": 1000,
-        "quantite_stock": 30,
+        "quantite_stock": 20,
         "date_expiration": "2026-04-28",
         "date_enregistrement": "2026-04-28"
     },
@@ -19,8 +19,16 @@
         "code_barre": "6044000013992",
         "nom": "EDEN EAU",
         "prix_unitaire_ht": 499,
-        "quantite_stock": 50,
+        "quantite_stock": 43,
         "date_expiration": "2028-04-29",
         "date_enregistrement": "2026-04-29"
+    },
+    {
+        "code_barre": "3E71E17E18E17",
+        "nom": "lait en poudre",
+        "prix_unitaire_ht": 4000,
+        "quantite_stock": 40,
+        "date_expiration": "2027-03-28",
+        "date_enregistrement": "2026-05-29"
     }
 ]
